@@ -31,4 +31,21 @@ describe('recipes', function() {
         });
       });
   });
+
+  it('should create a new recipe with POST request', function (){
+    const newRecipe = {name: 'salad', ingredients: ['lettuce', 'olive oil']};
+    return chai.request(app)
+      .post('/recipes')
+      .send(newRecipe)
+      .then(function(response){
+        expect(response).to.have.status(201);
+        expect(response).to.be.json;
+        expect(response.body).to.be.a('object');
+        const expectedKeys = ['name', 'ingredients'];
+        expect(response.body).to.include.keys(expectedKeys);
+        expect(response.body.id).to.not.equal(null);
+        expect(response.body).to.deep.equal(
+          Object.assign(newRecipe, {id: response.body.id}));
+      });
+  });
 });
