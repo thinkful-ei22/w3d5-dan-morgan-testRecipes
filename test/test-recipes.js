@@ -71,7 +71,29 @@ describe('recipes', function() {
             );
           });
       });
-
-
   });
+
+  it('should delete a recipe with DELETE requests', function(){
+    return chai.request(app)
+      .get('/recipes')
+      .then(response => {
+        const idToBeDeleted = response.body[0].id;
+        const recipesLength = response.body.length;
+        
+        return chai.request(app)
+          .delete(`/recipes/${idToBeDeleted}`)
+          .then(response => {
+            expect(response).to.have.status(204);
+          })
+          .then(() => { 
+            return chai.request(app)
+              .get('/recipes')
+              .then(response => {
+                const newLength = response.body.length;
+                expect(newLength).to.equal(recipesLength-1);
+              });
+          });
+      });
+  });
+
 });
